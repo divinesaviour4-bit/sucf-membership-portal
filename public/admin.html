@@ -1,0 +1,388 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUCF Town Campus - Admin Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { sucfGreen: { DEFAULT: '#1B4D3E', dark: '#113025', bg: '#F0FDF4' } } } } }
+    </script>
+    <style>
+        @media print {
+            body { background: white !important; color: black !important; }
+            header, .no-print, button { display: none !important; }
+            table { width: 100% !important; border-collapse: collapse !important; font-size: 10px !important; }
+            th, td { border: 1px solid #ddd !important; padding: 6px !important; }
+        }
+    </style>
+</head>
+<body class="bg-sucfGreen-bg text-gray-800 font-sans min-h-screen flex flex-col justify-between">
+    <header class="bg-sucfGreen text-white shadow-md border-b-4 border-white no-print">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-sucfGreen font-black px-3 py-2 rounded-lg text-xl shadow">SUCF</div>
+                <div>
+                    <h1 class="text-lg font-bold">SUCF Town Campus - Admin Portal</h1>
+                    <p class="text-xs text-green-200">Database Management & Records</p>
+                </div>
+            </div>
+            <a href="/" class="px-4 py-2 bg-white text-sucfGreen font-bold rounded-lg shadow text-xs hover:bg-green-50">← Back to Form</a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+        <!-- LOGIN VIEW -->
+        <div id="loginView" class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl border-t-8 border-sucfGreen my-12 no-print">
+            <h2 class="text-2xl font-black text-sucfGreen text-center mb-2">Admin Login</h2>
+            <p class="text-xs text-gray-500 text-center mb-6">Enter admin password to access database records.</p>
+            <form id="adminLoginForm" class="space-y-4">
+                <input type="password" id="passwordInput" required placeholder="Enter password" class="w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen">
+                <button type="submit" class="w-full py-3 bg-sucfGreen text-white font-bold rounded-lg shadow hover:bg-sucfGreen-dark cursor-pointer">Login</button>
+            </form>
+        </div>
+
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboardView" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4 no-print">
+                <div>
+                    <h2 class="text-2xl font-black text-sucfGreen">Town Campus Database Dashboard</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleTrashView()" id="trashViewBtn" class="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg shadow cursor-pointer">🗑️ Trash (<span id="trashCount">0</span>)</button>
+                    <button onclick="logout()" class="px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-lg shadow cursor-pointer">Logout</button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 no-print" id="statsContainer">
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-sucfGreen flex justify-between items-center">
+                    <div><p class="text-xs text-gray-400 font-bold uppercase">Total Members</p><h3 id="statTotal" class="text-3xl font-black text-sucfGreen mt-1">0</h3></div>
+                    <span class="text-2xl">👥</span>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-600 flex justify-between items-center">
+                    <div><p class="text-xs text-gray-400 font-bold uppercase">Male Members</p><h3 id="statMale" class="text-3xl font-black text-blue-600 mt-1">0</h3></div>
+                    <span class="text-2xl">👨🏾‍🎓</span>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-pink-600 flex justify-between items-center">
+                    <div><p class="text-xs text-gray-400 font-bold uppercase">Female Members</p><h3 id="statFemale" class="text-3xl font-black text-pink-600 mt-1">0</h3></div>
+                    <span class="text-2xl">👩🏾‍🎓</span>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden border">
+                <div class="flex flex-wrap border-b bg-gray-50 p-2 gap-2 justify-between items-center no-print">
+                    <div class="flex flex-wrap gap-2" id="levelTabs">
+                        <button onclick="filterLevel('all')" class="level-btn px-4 py-2 text-xs font-bold rounded-lg bg-sucfGreen text-white shadow cursor-pointer">All Levels</button>
+                        <button onclick="filterLevel('100')" class="level-btn px-4 py-2 text-xs font-semibold rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">100L</button>
+                        <button onclick="filterLevel('200')" class="level-btn px-4 py-2 text-xs font-semibold rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">200L</button>
+                        <button onclick="filterLevel('300')" class="level-btn px-4 py-2 text-xs font-semibold rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">300L</button>
+                        <button onclick="filterLevel('400')" class="level-btn px-4 py-2 text-xs font-semibold rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">400L</button>
+                        <button onclick="filterLevel('500')" class="level-btn px-4 py-2 text-xs font-semibold rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">500L</button>
+                        <button onclick="filterLevel('600')" class="level-btn px-4 py-2 text-xs font-semibold rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer">600L</button>
+                    </div>
+                    <div id="bulkActions" class="flex gap-2 px-2">
+                        <button id="bulkDeleteBtn" onclick="bulkDelete()" class="hidden px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded shadow cursor-pointer">🗑️ Delete Selected</button>
+                        <button id="bulkRestoreBtn" onclick="bulkRestore()" class="hidden px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded shadow cursor-pointer">♻️ Restore Selected</button>
+                    </div>
+                </div>
+
+                <div class="p-4 flex justify-between items-center border-b bg-white no-print">
+                    <span class="text-xs font-bold text-gray-600 uppercase">Viewing: <span id="currentLevelLabel" class="text-sucfGreen">All Levels</span></span>
+                    <div class="space-x-2">
+                        <button onclick="exportCSV()" class="px-3 py-2 bg-green-700 text-white text-xs font-bold rounded shadow cursor-pointer">📥 Export Excel (CSV)</button>
+                        <button onclick="window.print()" class="px-3 py-2 bg-gray-700 text-white text-xs font-bold rounded shadow cursor-pointer">🖨️ Print / Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="bg-gray-100 uppercase border-b text-gray-700">
+                                <th class="p-3 no-print"><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th>
+                                <th class="p-3">Photo</th>
+                                <th class="p-3">Name</th>
+                                <th class="p-3">Email</th>
+                                <th class="p-3">Phone</th>
+                                <th class="p-3">Level</th>
+                                <th class="p-3">Department</th>
+                                <th class="p-3">Current Unit</th>
+                                <th class="p-3 text-center no-print">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FULL DETAILS MODAL -->
+    <div id="detailsModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold">✕</button>
+            <h3 class="text-xl font-black text-sucfGreen mb-4 pb-2 border-b">Complete Member Information</h3>
+            <div id="modalContent" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="mt-6 text-right">
+                <button onclick="closeModal()" class="px-4 py-2 bg-sucfGreen text-white font-bold rounded-lg">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLevel = 'all';
+        let cachedData = [];
+        let isTrashMode = false;
+
+        if (sessionStorage.getItem('auth') === 'true') {
+            showDashboard();
+        }
+
+        document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const password = document.getElementById('passwordInput').value;
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    sessionStorage.setItem('auth', 'true');
+                    showDashboard();
+                } else {
+                    alert('Incorrect Password!');
+                }
+            } catch (err) {
+                alert('Connection error.');
+            }
+        });
+
+        function showDashboard() {
+            document.getElementById('loginView').style.display = 'none';
+            document.getElementById('dashboardView').style.display = 'block';
+            document.getElementById('dashboardView').classList.remove('hidden');
+            loadData();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('auth');
+            location.reload();
+        }
+
+        async function loadData() {
+            try {
+                const statsRes = await fetch('/api/stats');
+                const stats = await statsRes.json();
+                document.getElementById('statTotal').innerText = stats.total;
+                document.getElementById('statMale').innerText = stats.male;
+                document.getElementById('statFemale').innerText = stats.female;
+                document.getElementById('trashCount').innerText = stats.trash;
+
+                fetchMembers(currentLevel);
+            } catch (err) {
+                console.error('Error loading stats');
+            }
+        }
+
+        async function fetchMembers(level) {
+            try {
+                const res = await fetch('/api/members?level=' + level + '&trash=' + isTrashMode);
+                cachedData = await res.json();
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '';
+                document.getElementById('selectAll').checked = false;
+                toggleBulkButtons();
+
+                if (!cachedData || cachedData.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-gray-400 font-semibold">No records found.</td></tr>';
+                    return;
+                }
+
+                cachedData.forEach(function(m) {
+                    var photoHtml = m.picture_url ? '<img src="' + m.picture_url + '" class="w-10 h-10 object-cover rounded-full border border-sucfGreen">' : '<div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-[10px] text-gray-500">No Img</div>';
+                    
+                    var actionButtons = isTrashMode ? 
+                        '<button onclick="restoreMember(' + m.id + ')" class="px-3 py-1.5 bg-green-600 text-white font-bold rounded shadow hover:bg-green-700 text-xs">Restore</button>' :
+                        '<button onclick="viewDetails(' + m.id + ')" class="px-3 py-1.5 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700 mr-1 text-xs">👁️ View Full Info</button>' +
+                        '<button onclick="deleteMember(' + m.id + ')" class="px-3 py-1.5 bg-red-600 text-white font-bold rounded shadow hover:bg-red-700 text-xs">Delete</button>';
+
+                    tbody.innerHTML += '<tr class="hover:bg-gray-50 border-b">' +
+                        '<td class="p-3 no-print"><input type="checkbox" class="row-checkbox" value="' + m.id + '" onclick="toggleBulkButtons()"></td>' +
+                        '<td class="p-3">' + photoHtml + '</td>' +
+                        '<td class="p-3 font-bold">' + (m.fullName || '') + '</td>' +
+                        '<td class="p-3 text-gray-600">' + (m.email || '') + '</td>' +
+                        '<td class="p-3 text-gray-600">' + (m.phone || '') + '</td>' +
+                        '<td class="p-3 font-bold text-sucfGreen">' + (m.level || '') + 'L</td>' +
+                        '<td class="p-3 text-gray-600">' + (m.department || '') + '</td>' +
+                        '<td class="p-3"><span class="px-2 py-1 bg-green-100 text-sucfGreen text-[10px] font-bold rounded-full">' + (m.currentUnit || '') + '</span></td>' +
+                        '<td class="p-3 text-center whitespace-nowrap no-print">' + actionButtons + '</td>' +
+                    '</tr>';
+                });
+            } catch (err) {
+                console.error('Error fetching members');
+            }
+        }
+
+        function toggleTrashView() {
+            isTrashMode = !isTrashMode;
+            const btn = document.getElementById('trashViewBtn');
+            const levelTabs = document.getElementById('levelTabs');
+            const statsContainer = document.getElementById('statsContainer');
+
+            if (isTrashMode) {
+                btn.innerHTML = '📂 Back to Active Members';
+                btn.className = 'px-4 py-2 bg-sucfGreen text-white text-xs font-bold rounded-lg shadow cursor-pointer';
+                levelTabs.style.display = 'none';
+                statsContainer.style.display = 'none';
+                document.getElementById('currentLevelLabel').innerText = 'Trash / Deleted Records';
+                document.getElementById('bulkDeleteBtn').innerText = '🗑️ Delete Permanently';
+                document.getElementById('bulkRestoreBtn').style.display = 'inline-block';
+            } else {
+                btn.innerHTML = '🗑️ Trash (<span id="trashCount">0</span>)';
+                btn.className = 'px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg shadow cursor-pointer';
+                levelTabs.style.display = 'flex';
+                statsContainer.style.display = 'grid';
+                document.getElementById('currentLevelLabel').innerText = 'All Levels';
+                document.getElementById('bulkDeleteBtn').innerText = '🗑️ Delete Selected';
+                loadData();
+                return;
+            }
+            fetchMembers('all');
+        }
+
+        function viewDetails(id) {
+            var member = cachedData.find(function(m) { return m.id === id; });
+            if (!member) return;
+
+            var content = '';
+            var labels = {
+                fullName: 'Full Name', email: 'Email Address', phone: 'Phone Number', gender: 'Gender',
+                dob: 'Date of Birth', stateOfOrigin: 'State of Origin', address: 'Residential Address',
+                church: 'Church Denomination / Assembly', emergencyContact: 'Emergency Contact', parentAddress: 'Parent Address',
+                faculty: 'Faculty', department: 'Department', level: 'Academic Level', bornAgain: 'Born Again Christian',
+                source: 'Source of Awareness', currentUnit: 'Current Fellowship Unit', desiredUnit: 'Desired Fellowship Unit',
+                feedbackWrong: 'What is Wrong / Feedback', feedbackSuggestions: 'Suggestions for Improvement'
+            };
+
+            var photoHtml = member.picture_url ? '<div class="col-span-2 text-center mb-3"><img src="' + member.picture_url + '" class="w-24 h-24 object-cover rounded-full mx-auto border-2 border-sucfGreen shadow"></div>' : '';
+            content += photoHtml;
+
+            for (var key in labels) {
+                if (member[key]) {
+                    content += '<div class="bg-gray-50 p-3 rounded-lg border"><span class="block text-gray-400 font-bold uppercase text-[10px]">' + labels[key] + '</span><span class="font-semibold text-gray-800">' + member[key] + '</span></div>';
+                }
+            }
+
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('detailsModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').classList.add('hidden');
+        }
+
+        async function deleteMember(id) {
+            if (!confirm('Are you sure you want to move this member to trash?')) return;
+            await sendPost('/api/members/delete', { ids: [id] });
+        }
+
+        async function restoreMember(id) {
+            await sendPost('/api/members/restore', { ids: [id] });
+        }
+
+        async function bulkDelete() {
+            var selectedIds = getSelectedIds();
+            if (selectedIds.length === 0) return;
+            
+            var endpoint = isTrashMode ? '/api/members/permanent-delete' : '/api/members/delete';
+            var msg = isTrashMode ? 'Permanently delete selected members?' : 'Move selected members to trash?';
+            
+            if (!confirm(msg)) return;
+            await sendPost(endpoint, { ids: selectedIds });
+        }
+
+        async function bulkRestore() {
+            var selectedIds = getSelectedIds();
+            if (selectedIds.length === 0) return;
+            if (!confirm('Restore selected members?')) return;
+            await sendPost('/api/members/restore', { ids: selectedIds });
+        }
+
+        async function sendPost(url, data) {
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    loadData();
+                } else {
+                    alert('Action failed: ' + result.error);
+                }
+            } catch (err) {
+                alert('Network error.');
+            }
+        }
+
+        function toggleSelectAll() {
+            var checkboxes = document.querySelectorAll('.row-checkbox');
+            var selectAll = document.getElementById('selectAll').checked;
+            checkboxes.forEach(function(cb) { cb.checked = selectAll; });
+            toggleBulkButtons();
+        }
+
+        function toggleBulkButtons() {
+            var selectedIds = getSelectedIds();
+            var delBtn = document.getElementById('bulkDeleteBtn');
+            var resBtn = document.getElementById('bulkRestoreBtn');
+
+            if (selectedIds.length > 0) {
+                delBtn.classList.remove('hidden');
+                if (isTrashMode) resBtn.classList.remove('hidden');
+            } else {
+                delBtn.classList.add('hidden');
+                resBtn.classList.add('hidden');
+            }
+        }
+
+        function getSelectedIds() {
+            var checkboxes = document.querySelectorAll('.row-checkbox:checked');
+            var ids = [];
+            checkboxes.forEach(function(cb) { ids.push(Number(cb.value)); });
+            return ids;
+        }
+
+        function filterLevel(level) {
+            currentLevel = level;
+            var buttons = document.querySelectorAll('.level-btn');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].className = "level-btn px-4 py-2 text-xs font-semibold rounded-lg text-gray-600 hover:bg-gray-200 cursor-pointer";
+            }
+            event.target.className = "level-btn px-4 py-2 text-xs font-bold rounded-lg bg-sucfGreen text-white shadow cursor-pointer";
+            document.getElementById('currentLevelLabel').innerText = level === 'all' ? 'All Levels' : level + ' Level';
+            fetchMembers(level);
+        }
+
+        function exportCSV() {
+            if (cachedData.length === 0) { alert('No data to export'); return; }
+            var csv = "Name,Email,Phone,Gender,Level,Faculty,Department,State,Church,Born Again,Current Unit,Desired Unit\n";
+            cachedData.forEach(function(m) {
+                csv += '"' + (m.fullName || '') + '","' + (m.email || '') + '","' + (m.phone || '') + '","' + (m.gender || '') + '","' + (m.level || '') + '","' + (m.faculty || '') + '","' + (m.department || '') + '","' + (m.stateOfOrigin || '') + '","' + (m.church || '') + '","' + (m.bornAgain || '') + '","' + (m.currentUnit || '') + '","' + (m.desiredUnit || '') + '"\n';
+            });
+            var link = document.createElement("a");
+            link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
+            link.download = "SUCF_TownCampus_" + currentLevel + "_Level_Report.csv";
+            link.click();
+        }
+    </script>
+</body>
+</html>

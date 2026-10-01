@@ -1,0 +1,303 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUCF Town Campus - Membership Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { sucfGreen: { DEFAULT: '#1B4D3E', dark: '#113025', bg: '#F0FDF4' } } } } }
+    </script>
+</head>
+<body class="bg-sucfGreen-bg text-gray-800 font-sans min-h-screen flex flex-col justify-between">
+    <header class="bg-sucfGreen text-white shadow-md border-b-4 border-white">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-sucfGreen font-black px-3 py-2 rounded-lg text-xl shadow">SUCF</div>
+                <div>
+                    <h1 class="text-lg font-bold">Scripture Union Campus Fellowship</h1>
+                    <p class="text-xs text-green-200">Town Campus • Membership Portal</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleAboutModal()" class="px-3 py-2 bg-green-700 text-white font-semibold rounded-lg shadow hover:bg-green-800 border border-green-500 text-xs cursor-pointer">About Us</button>
+                <a href="/admin.html" class="text-green-300 hover:text-white font-semibold text-xs tracking-wide">Hello</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ABOUT US MODAL / EXPANDABLE BOX -->
+    <div id="aboutModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border-t-8 border-sucfGreen">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-md font-bold text-sucfGreen uppercase">About Scripture Union Campus Fellowship</h3>
+                <button onclick="toggleAboutModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl cursor-pointer">&times;</button>
+            </div>
+            <p class="text-sm text-gray-600 leading-relaxed">
+                Scripture Union Campus Fellowship (SUCF) is a unique, interdenominational, and non-denominational Christian campus fellowship dedicated to bringing God's good news to youth, raising godly students, and transforming campus life through the word of God.
+            </p>
+            <div class="flex justify-end pt-2">
+                <button onclick="toggleAboutModal()" class="px-4 py-2 bg-sucfGreen text-white font-bold rounded-lg text-xs cursor-pointer">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-3xl mx-auto px-4 py-8 flex-grow w-full space-y-8">
+        
+        <!-- MEMBERSHIP FORM CONTAINER -->
+        <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-lg border-t-8 border-sucfGreen">
+            <div class="text-center mb-8 border-b pb-6">
+                <span class="bg-green-100 text-sucfGreen text-xs font-bold px-3 py-1 rounded-full uppercase">2026/2027 Session</span>
+                <h2 class="text-2xl sm:text-3xl font-black text-sucfGreen mt-2">MEMBERSHIP REGISTRATION FORM</h2>
+                <p id="stepIndicator" class="text-xs font-bold text-gray-500 mt-2 uppercase tracking-wider">Step 1 of 3: Personal Information</p>
+            </div>
+
+            <!-- SUCCESS THANK YOU MESSAGE (Hidden by default) -->
+            <div id="successMessage" class="hidden text-center py-12 space-y-4">
+                <div class="w-16 h-16 bg-green-100 text-sucfGreen rounded-full flex items-center justify-center mx-auto text-3xl font-bold">✓</div>
+                <h3 class="text-2xl font-black text-sucfGreen">Thank You for Registering!</h3>
+                <p class="text-sm text-gray-600 max-w-md mx-auto">
+                    Your membership registration for SUCF Town Campus (2026/2027 Session) has been successfully submitted. We are glad to have you with us!
+                </p>
+                <button onclick="resetFormView()" class="px-6 py-2 bg-sucfGreen text-white font-bold rounded-lg text-xs cursor-pointer shadow">Register Another Member</button>
+            </div>
+
+            <form id="membershipForm" onsubmit="handleRegistration(event)" class="space-y-6">
+                
+                <!-- SECTION 1: PERSONAL INFORMATION & PICTURE -->
+                <div id="formStep1" class="space-y-4">
+                    <h3 class="text-xs font-bold text-sucfGreen uppercase bg-green-50 p-2 rounded border-l-4 border-sucfGreen">1. Personal Information</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Full Name *</label><input type="text" id="fullName" required class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Email Address *</label><input type="email" id="email" required class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Phone Number *</label><input type="tel" id="phone" required class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Gender *</label><select id="gender" required class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Date of Birth *</label><input type="date" id="dob" required class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">State of Origin *</label><input type="text" id="stateOfOrigin" required class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"></div>
+                    </div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-700 uppercase">Residential Address *</label><textarea id="address" rows="2" required class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"></textarea></div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Church Denomination *</label><input type="text" id="church" required class="mt-1 w-full p-3 bg-gray-50 border rounded-lg"></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Emergency Contact *</label><input type="text" id="emergencyContact" required placeholder="Name & relationship" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase">Residential Address of Parent or Guardian *</label>
+                        <textarea id="parentAddress" rows="2" required placeholder="Where you travel to when school is on holiday" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase">Upload Picture *</label>
+                        <input type="file" id="pictureInput" accept="image/*" required class="mt-1 w-full p-2 bg-gray-50 border rounded-lg text-xs file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-sucfGreen hover:file:bg-green-100">
+                        <p class="text-[10px] text-gray-500 mt-1">Please upload a clear picture of yourself.</p>
+                    </div>
+
+                    <div class="flex justify-end pt-4">
+                        <button type="button" id="btnNext1" class="px-8 py-3 bg-sucfGreen text-white font-bold rounded-lg shadow hover:bg-sucfGreen-dark text-xs cursor-pointer">Next →</button>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: SCHOOL INFORMATION -->
+                <div id="formStep2" class="hidden space-y-4">
+                    <h3 class="text-xs font-bold text-sucfGreen uppercase bg-green-50 p-2 rounded border-l-4 border-sucfGreen">2. School Information</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Faculty *</label><input type="text" id="faculty" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg"></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Department *</label><input type="text" id="department" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg"></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Level *</label><select id="level" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg"><option value="">Select Level</option><option value="100">100 Level</option><option value="200">200 Level</option><option value="300">300 Level</option><option value="400">400 Level</option><option value="500">500 Level</option><option value="600">600 Level</option></select></div>
+                    </div>
+
+                    <div class="flex justify-between pt-4">
+                        <button type="button" id="btnPrev1" class="px-6 py-3 bg-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-400 text-xs cursor-pointer">← Back</button>
+                        <button type="button" id="btnNext2" class="px-8 py-3 bg-sucfGreen text-white font-bold rounded-lg shadow hover:bg-sucfGreen-dark text-xs cursor-pointer">Next →</button>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: SPIRITUAL & UNIT PREFERENCES -->
+                <div id="formStep3" class="hidden space-y-4">
+                    <h3 class="text-xs font-bold text-sucfGreen uppercase bg-green-50 p-2 rounded border-l-4 border-sucfGreen">3. Spiritual & Unit Preferences</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Are you Born Again? *</label><select id="bornAgain" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg"><option value="">Select</option><option value="Yes">Yes</option><option value="No">No</option><option value="Maybe">Maybe</option></select></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">How did you know SUCF? *</label><select id="source" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg"><option value="">Select</option><option value="Recommendation">Recommendation from Relations</option><option value="Social Media">Social Media</option><option value="Evangelism">Evangelism</option><option value="Other">Other</option></select></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">What Unit do you belong to in the fellowship? *</label><select id="currentUnit" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg"><option value="">Select</option><option value="Choir">Choir</option><option value="Media">Media</option><option value="Masterpiece">Masterpiece (Drama Unit)</option><option value="Prayer">Prayer</option><option value="Follow-up">Follow-up</option><option value="Other">Other / None</option></select></div>
+                        <div><label class="block text-xs font-bold text-gray-700 uppercase">Which Unit would you like to join? *</label><select id="desiredUnit" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg"><option value="">Select</option><option value="Choir">Choir</option><option value="Media">Media</option><option value="Masterpiece">Masterpiece (Drama Unit)</option><option value="Prayer">Prayer</option><option value="Follow-up">Follow-up</option></select></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase">Is there anything you feel the fellowship isn't doing right?</label>
+                        <textarea id="feedbackWrong" rows="2" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase">What suggestions do you have that could improve the fellowship?</label>
+                        <textarea id="feedbackSuggestions" rows="2" class="mt-1 w-full p-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-sucfGreen"></textarea>
+                    </div>
+
+                    <!-- "I AGREE" CHECKBOX -->
+                    <div class="flex items-center space-x-2 pt-2">
+                        <input type="checkbox" id="agreeCheck" required class="w-4 h-4 text-sucfGreen rounded border-gray-300 focus:ring-sucfGreen cursor-pointer">
+                        <label for="agreeCheck" class="text-xs font-bold text-gray-700 cursor-pointer">I agree that the information provided is correct.</label>
+                    </div>
+
+                    <div class="flex justify-between pt-4">
+                        <button type="button" id="btnPrev2" class="px-6 py-3 bg-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-400 text-xs cursor-pointer">← Back</button>
+                        <button type="submit" class="px-10 py-3 bg-sucfGreen text-white font-black rounded-xl shadow-lg hover:bg-sucfGreen-dark transition tracking-wide text-xs cursor-pointer">Submit Membership Form 🚀</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- FOOTER WITH CLICKABLE SOCIAL LINKS -->
+    <footer class="bg-sucfGreen-dark text-green-100 text-xs py-8 mt-12 border-t-4 border-white">
+        <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div class="space-y-1.5">
+                <h3 class="font-bold text-sm text-white uppercase tracking-wider mb-2">Contact Us</h3>
+                <p>📍 <strong>Location:</strong> 52 Itu Road by Scripture Union House, Ikot Mbonde, Uyo</p>
+                <p>📞 <strong>WhatsApp:</strong> <a href="https://wa.me/2349024596708" target="_blank" class="text-white underline hover:text-green-300 font-bold">09024596708</a></p>
+                <p>📧 <strong>Email:</strong> <a href="mailto:sucfgroupuniuyo@gmail.com" class="text-white underline hover:text-green-300 font-bold">sucfgroupuniuyo@gmail.com</a></p>
+                <p>📘 <strong>Facebook:</strong> <a href="https://facebook.com/sucfuniuyo" target="_blank" class="text-white underline hover:text-green-300 font-bold">sucfuniuyo</a></p>
+            </div>
+            <div class="md:text-right space-y-1">
+                <p class="font-bold text-sm text-white">Scripture Union Campus Fellowship (SUCF) - Town Campus</p>
+                <p class="text-green-300">&copy; 2026/2027 SUCF Town Campus. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleAboutModal() {
+            const modal = document.getElementById('aboutModal');
+            modal.classList.toggle('hidden');
+        }
+
+        document.getElementById('btnNext1').addEventListener('click', function() {
+            const fields = ['fullName', 'email', 'phone', 'gender', 'dob', 'stateOfOrigin', 'address', 'church', 'emergencyContact', 'parentAddress'];
+            for (let id of fields) {
+                const el = document.getElementById(id);
+                if (!el.value) {
+                    el.reportValidity();
+                    return;
+                }
+            }
+            const pictureInput = document.getElementById('pictureInput');
+            if (!pictureInput.files[0]) {
+                alert('Please upload your picture.');
+                return;
+            }
+
+            document.getElementById('formStep1').classList.add('hidden');
+            document.getElementById('formStep2').classList.remove('hidden');
+            document.getElementById('stepIndicator').innerText = 'Step 2 of 3: School Information';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        document.getElementById('btnNext2').addEventListener('click', function() {
+            const fields = ['faculty', 'department', 'level'];
+            for (let id of fields) {
+                const el = document.getElementById(id);
+                if (!el.value) {
+                    el.reportValidity();
+                    return;
+                }
+            }
+
+            document.getElementById('formStep2').classList.add('hidden');
+            document.getElementById('formStep3').classList.remove('hidden');
+            document.getElementById('stepIndicator').innerText = 'Step 3 of 3: Spiritual & Unit Preferences';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        document.getElementById('btnPrev1').addEventListener('click', function() {
+            document.getElementById('formStep2').classList.add('hidden');
+            document.getElementById('formStep1').classList.remove('hidden');
+            document.getElementById('stepIndicator').innerText = 'Step 1 of 3: Personal Information';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        document.getElementById('btnPrev2').addEventListener('click', function() {
+            document.getElementById('formStep3').classList.add('hidden');
+            document.getElementById('formStep2').classList.remove('hidden');
+            document.getElementById('stepIndicator').innerText = 'Step 2 of 3: School Information';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        async function handleRegistration(e) {
+            e.preventDefault();
+            
+            const agreeCheck = document.getElementById('agreeCheck');
+            if (!agreeCheck.checked) {
+                alert('Please check the box confirming that the information provided is correct.');
+                return;
+            }
+
+            const fileInput = document.getElementById('pictureInput');
+            const file = fileInput.files[0];
+            if (!file) { alert('Picture is required.'); return; }
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async function () {
+                const base64Image = reader.result;
+
+                const data = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    gender: document.getElementById('gender').value,
+                    dob: document.getElementById('dob').value,
+                    stateOfOrigin: document.getElementById('stateOfOrigin').value,
+                    address: document.getElementById('address').value,
+                    church: document.getElementById('church').value,
+                    emergencyContact: document.getElementById('emergencyContact').value,
+                    parentAddress: document.getElementById('parentAddress').value,
+                    faculty: document.getElementById('faculty').value,
+                    department: document.getElementById('department').value,
+                    level: document.getElementById('level').value,
+                    bornAgain: document.getElementById('bornAgain').value,
+                    source: document.getElementById('source').value,
+                    currentUnit: document.getElementById('currentUnit').value,
+                    desiredUnit: document.getElementById('desiredUnit').value,
+                    feedbackWrong: document.getElementById('feedbackWrong').value,
+                    feedbackSuggestions: document.getElementById('feedbackSuggestions').value,
+                    picture: base64Image
+                };
+
+                const res = await fetch('/api/members', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    // Hide form and show thank you message
+                    document.getElementById('membershipForm').classList.add('hidden');
+                    document.getElementById('successMessage').classList.remove('hidden');
+                    document.getElementById('stepIndicator').innerText = 'Registration Completed Successfully';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    alert('Registration failed.');
+                }
+            };
+        }
+
+        function resetFormView() {
+            document.getElementById('membershipForm').reset();
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('membershipForm').classList.remove('hidden');
+            document.getElementById('formStep3').classList.add('hidden');
+            document.getElementById('formStep1').classList.remove('hidden');
+            document.getElementById('stepIndicator').innerText = 'Step 1 of 3: Personal Information';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
