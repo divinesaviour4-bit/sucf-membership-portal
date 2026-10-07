@@ -1,0 +1,403 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SUCF Town Campus - Membership Registration</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between font-sans text-slate-800">
+
+    <!-- TOP BAR WITH ADMIN LINK -->
+    <header class="bg-emerald-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-2">
+            <span class="bg-white text-emerald-900 text-xs font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">SUCF</span>
+            <span class="text-sm font-semibold tracking-wide hidden sm:inline">Town Campus Portal</span>
+        </div>
+        <div class="flex items-center space-x-4 text-sm">
+            <button onclick="toggleAboutModal()" class="text-emerald-200 hover:text-white transition font-medium">About Us</button>
+            <a href="admin.html" class="bg-emerald-700 hover:bg-emerald-600 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition border border-emerald-600">Admin Login</a>
+        </div>
+    </header>
+
+    <!-- MAIN HERO & FORM CONTAINER -->
+    <main class="flex-1 max-w-xl w-full mx-auto p-4 sm:p-6 my-6">
+        
+        <!-- HERO BANNER -->
+        <div class="bg-emerald-800 text-white p-6 rounded-2xl shadow-lg mb-6 text-center relative overflow-hidden">
+            <div class="relative z-10">
+                <h1 class="text-xl sm:text-2xl font-bold">Welcome to SUCF Town Campus</h1>
+                <p class="text-xs sm:text-sm text-emerald-100 mt-1">Register for the 2026/2027 academic session membership portal.</p>
+            </div>
+            <!-- Step Indicators -->
+            <div class="flex justify-center items-center space-x-2 mt-4 relative z-10">
+                <span id="dot1" class="w-3 h-3 rounded-full bg-white transition"></span>
+                <span id="dot2" class="w-3 h-3 rounded-full bg-emerald-600 transition"></span>
+                <span id="dot3" class="w-3 h-3 rounded-full bg-emerald-600 transition"></span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-emerald-100">
+            <form id="registrationForm" class="space-y-5">
+                
+                <!-- SECTION 1: PERSONAL INFORMATION -->
+                <div id="section1" class="form-section space-y-4">
+                    <div class="border-b border-emerald-100 pb-2 flex items-center justify-between">
+                        <h2 class="text-base font-bold text-emerald-900">1. Personal Information</h2>
+                        <span class="text-xs bg-emerald-50 text-emerald-800 font-semibold px-2 py-0.5 rounded">Step 1 of 3</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Full Name *</label>
+                        <input type="text" id="full_name" required placeholder="Enter your full name" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Email Address *</label>
+                            <input type="email" id="email" required placeholder="yourname@gmail.com" 
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Phone Number *</label>
+                            <input type="tel" id="phone" required placeholder="080XXXXXXXX" 
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Gender *</label>
+                            <select id="gender" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Date of Birth *</label>
+                            <input type="date" id="date_of_birth" required 
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">State of Origin *</label>
+                            <input type="text" id="state_of_origin" required placeholder="e.g. Akwa Ibom State" 
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Church Denomination *</label>
+                            <input type="text" id="church_denomination" required placeholder="e.g. ECWA, Anglican" 
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Residential Address *</label>
+                        <textarea id="residential_address" required rows="2" placeholder="Enter your current residential address" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Parent / Guardian Address *</label>
+                        <textarea id="parent_address" required rows="2" placeholder="Enter parents' or guardian's address" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Emergency Contact *</label>
+                        <input type="text" id="emergency_contact" required placeholder="Name and Phone Number" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Upload Picture *</label>
+                        <p class="text-xs text-slate-400 mb-1">Please upload a clear passport photograph.</p>
+                        <input type="file" id="photoInput" accept="image/*" required
+                            class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-slate-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-900 hover:file:bg-emerald-200 transition">
+                    </div>
+
+                    <button type="button" onclick="nextSection(2)" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-semibold py-3.5 rounded-xl transition shadow-md mt-4">
+                        Next Section →
+                    </button>
+                </div>
+
+                <!-- SECTION 2: FACULTY, DEPARTMENT & LEVEL -->
+                <div id="section2" class="form-section hidden space-y-4">
+                    <div class="border-b border-emerald-100 pb-2 flex items-center justify-between">
+                        <h2 class="text-base font-bold text-emerald-900">2. Faculty, Dept & Level</h2>
+                        <span class="text-xs bg-emerald-50 text-emerald-800 font-semibold px-2 py-0.5 rounded">Step 2 of 3</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Faculty *</label>
+                        <input type="text" id="faculty" placeholder="e.g. Science" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Department *</label>
+                        <input type="text" id="department" placeholder="e.g. Computer Science" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Level *</label>
+                        <input type="text" id="level" placeholder="e.g. 200L" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                    </div>
+
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" onclick="prevSection(1)" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-3.5 rounded-xl transition">
+                            ← Back
+                        </button>
+                        <button type="button" onclick="nextSection(3)" class="w-1/2 bg-emerald-800 hover:bg-emerald-900 text-white font-semibold py-3.5 rounded-xl transition shadow-md">
+                            Next Section →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: SPIRITUAL & UNIT PREFERENCES -->
+                <div id="section3" class="form-section hidden space-y-4">
+                    <div class="border-b border-emerald-100 pb-2 flex items-center justify-between">
+                        <h2 class="text-base font-bold text-emerald-900">3. Spiritual & Preferences</h2>
+                        <span class="text-xs bg-emerald-50 text-emerald-800 font-semibold px-2 py-0.5 rounded">Step 3 of 3</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Are you born again? *</label>
+                            <select id="born_again" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                                <option value="">Select</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                                <option value="Maybe">Maybe</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">How did you know SUCF? *</label>
+                            <select id="how_you_knew_sucf" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                                <option value="">Select</option>
+                                <option value="Recommendation from Relations">Recommendation from Relations</option>
+                                <option value="Social Media">Social Media</option>
+                                <option value="Evangelism">Evangelism</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Current Fellowship Unit *</label>
+                            <select id="current_unit" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                                <option value="">Select</option>
+                                <option value="Choir">Choir</option>
+                                <option value="Media">Media</option>
+                                <option value="Masterpiece (Drama Unit)">Masterpiece (Drama Unit)</option>
+                                <option value="Prayer">Prayer</option>
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Other / None">Other / None</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Preferred Unit to Join *</label>
+                            <select id="preferred_unit" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50">
+                                <option value="">Select</option>
+                                <option value="Choir">Choir</option>
+                                <option value="Media">Media</option>
+                                <option value="Masterpiece (Drama Unit)">Masterpiece (Drama Unit)</option>
+                                <option value="Prayer">Prayer</option>
+                                <option value="Follow-up">Follow-up</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Critique / Areas for Improvement</label>
+                        <textarea id="fellowship_critique" rows="2" placeholder="Optional feedback..." 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Suggestions for Fellowship</label>
+                        <textarea id="fellowship_suggestions" rows="2" placeholder="Optional suggestions..." 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-700 focus:outline-none transition bg-slate-50"></textarea>
+                    </div>
+
+                    <div class="flex items-center space-x-3 pt-2 bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                        <input type="checkbox" id="agreement" required class="w-5 h-5 text-emerald-800 rounded border-slate-300 focus:ring-emerald-700">
+                        <label for="agreement" class="text-xs text-slate-700 font-medium">I agree that the information provided is correct. *</label>
+                    </div>
+
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" onclick="prevSection(2)" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-3.5 rounded-xl transition">
+                            ← Back
+                        </button>
+                        <button type="submit" id="submitBtn" class="w-1/2 bg-emerald-800 hover:bg-emerald-900 text-white font-semibold py-3.5 rounded-xl transition shadow-md">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- ABOUT US MODAL / POPUP -->
+    <div id="aboutModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-2xl relative space-y-4">
+            <h3 class="text-lg font-bold text-emerald-900">About SUCF Town Campus</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">
+                Scripture Union Campus Fellowship (SUCF) Town Campus is a vibrant interdenominational student fellowship committed to raising godly student leaders, preaching the undiluted Word of God, and standing strong in faith and academic excellence.
+            </p>
+            <button onclick="toggleAboutModal()" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white py-2.5 rounded-xl font-semibold text-sm transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- CLEANLY ARRANGED FOOTER -->
+    <footer class="bg-emerald-950 text-emerald-100 py-8 px-6 mt-12 border-t border-emerald-900">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-xs">
+            <div class="space-y-2">
+                <p class="font-bold uppercase tracking-wider text-white text-sm">SUCF Town Campus</p>
+                <p class="text-emerald-300">Raising godly leaders and transforming campuses through Christ.</p>
+            </div>
+            <div class="space-y-1.5">
+                <p class="font-bold uppercase tracking-wider text-white text-sm">Contact Us</p>
+                <p>📍 52 Itu Road by Scripture Union House, Ikot Mbonde, Uyo</p>
+                <p>📞 09024596708</p>
+                <p>📧 sucfgroupuniuyo@gmail.com</p>
+            </div>
+            <div class="space-y-1.5">
+                <p class="font-bold uppercase tracking-wider text-white text-sm">Connect</p>
+                <p>📘 Facebook: sucfuniuyo</p>
+                <p class="mt-4 text-emerald-400">© 2026/2027 SUCF Town Campus.<br>All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIC FOR MULTI-STEP, ABOUT MODAL & SUPABASE -->
+    <script>
+        const SUPABASE_URL = 'https://nlhykdgpneynozwzuylk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5saHlrZGdwbmV5bm96d3p1eWxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4Njg0NzAsImV4cCI6MjEwNjQ0NDQ3MH0.-_KKSRsz_jLDveSH6kX7vjTCRabF2Eqd3bXR4ekJ_1c';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function toggleAboutModal() {
+            const modal = document.getElementById('aboutModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function nextSection(targetStep) {
+            const currentSec = document.querySelector('.form-section:not(.hidden)');
+            const inputs = currentSec.querySelectorAll('[required]');
+            let valid = true;
+            inputs.forEach(input => {
+                if (!input.value) {
+                    valid = false;
+                    input.classList.add('border-red-500');
+                } else {
+                    input.classList.remove('border-red-500');
+                }
+            });
+
+            if (!valid) {
+                alert('Please fill out all required fields before proceeding.');
+                return;
+            }
+
+            document.querySelectorAll('.form-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('section' + targetStep).classList.remove('hidden');
+
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById('dot' + i);
+                if (i <= targetStep) {
+                    dot.className = 'w-3 h-3 rounded-full bg-white transition';
+                } else {
+                    dot.className = 'w-3 h-3 rounded-full bg-emerald-600 transition';
+                }
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function prevSection(targetStep) {
+            document.querySelectorAll('.form-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('section' + targetStep).classList.remove('hidden');
+
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById('dot' + i);
+                if (i <= targetStep) {
+                    dot.className = 'w-3 h-3 rounded-full bg-white transition';
+                } else {
+                    dot.className = 'w-3 h-3 rounded-full bg-emerald-600 transition';
+                }
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.textContent = 'Submitting...';
+            btn.disabled = true;
+
+            try {
+                let photoUrl = '';
+                const fileInput = document.getElementById('photoInput');
+                
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    photoUrl = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                const formData = {
+                    full_name: document.getElementById('full_name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    gender: document.getElementById('gender').value,
+                    date_of_birth: document.getElementById('date_of_birth').value,
+                    state_of_origin: document.getElementById('state_of_origin').value,
+                    church_denomination: document.getElementById('church_denomination').value,
+                    residential_address: document.getElementById('residential_address').value,
+                    parent_address: document.getElementById('parent_address').value,
+                    emergency_contact: document.getElementById('emergency_contact').value,
+                    faculty: document.getElementById('faculty').value,
+                    department: document.getElementById('department').value,
+                    level: document.getElementById('level').value,
+                    born_again: document.getElementById('born_again').value,
+                    how_you_knew_sucf: document.getElementById('how_you_knew_sucf').value,
+                    current_unit: document.getElementById('current_unit').value,
+                    preferred_unit: document.getElementById('preferred_unit').value,
+                    fellowship_critique: document.getElementById('fellowship_critique').value,
+                    fellowship_suggestions: document.getElementById('fellowship_suggestions').value,
+                                        photo: photoUrl
+                };
+
+                const { error } = await supabaseClient
+                    .from('sucf data')
+                    .insert([formData]);
+
+                if (error) throw error;
+
+                alert('Registration successful! Welcome to SUCF Town Campus.');
+                window.location.reload();
+            } catch (err) {
+                console.error('Submission error:', err.message);
+                alert('Registration failed: ' + err.message);
+            } finally {
+                btn.textContent = 'Submit';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

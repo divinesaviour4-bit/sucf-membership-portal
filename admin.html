@@ -1,0 +1,344 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUCF Town Campus - Advanced Admin Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="flex items-center justify-center min-h-screen px-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-emerald-900">Admin Portal</h1>
+                <p class="text-sm text-slate-500 mt-1">SUCF Town Campus Membership</p>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Admin Email</label>
+                    <input type="email" id="adminEmail" required placeholder="sucfgroupuniuyo@gmail.com" 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-600 focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Password</label>
+                    <input type="password" id="adminPassword" required placeholder="Enter password" 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-600 focus:outline-none transition">
+                </div>
+                <button type="submit" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-semibold py-3 rounded-xl transition shadow-md">
+                    Login Securely
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD PANEL (Hidden by default) -->
+    <div id="adminPanel" class="hidden min-h-screen flex flex-col">
+        <header class="bg-emerald-900 text-white shadow-md px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold">SUCF Admin Dashboard</h2>
+            <div class="space-x-2">
+                <button onclick="handleLogout()" class="bg-emerald-800 hover:bg-emerald-700 px-4 py-2 rounded-lg text-sm transition">Logout</button>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+            
+            <!-- STATISTICS CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs font-semibold text-slate-400 uppercase">Total Members</p>
+                    <p id="statTotal" class="text-2xl font-bold text-emerald-900 mt-1">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs font-semibold text-slate-400 uppercase">Total Males</p>
+                    <p id="statMales" class="text-2xl font-bold text-blue-800 mt-1">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs font-semibold text-slate-400 uppercase">Total Females</p>
+                    <p id="statFemales" class="text-2xl font-bold text-pink-700 mt-1">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs font-semibold text-slate-400 uppercase">Active Units</p>
+                    <p id="statUnits" class="text-2xl font-bold text-emerald-700 mt-1">0</p>
+                </div>
+            </div>
+
+            <!-- CONTROLS: LEVEL TABS & EXPORT/PRINT OPTIONS -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <!-- Level Filter Buttons -->
+                    <div id="levelTabs" class="flex flex-wrap gap-2">
+                        <button onclick="filterByLevel('ALL')" class="level-btn px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-800 text-white transition">All Levels</button>
+                        <button onclick="filterByLevel('100L')" class="level-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">100L</button>
+                        <button onclick="filterByLevel('200L')" class="level-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">200L</button>
+                        <button onclick="filterByLevel('300L')" class="level-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">300L</button>
+                        <button onclick="filterByLevel('400L')" class="level-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">400L</button>
+                        <button onclick="filterByLevel('500L')" class="level-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">500L</button>
+                    </div>
+
+                    <!-- Gender Quick Filter -->
+                    <div class="flex items-center space-x-2">
+                        <select id="genderFilter" onchange="applyFilters()" class="px-3 py-2 border rounded-lg text-sm bg-slate-50">
+                            <option value="ALL">All Genders</option>
+                            <option value="Male">Only Males</option>
+                            <option value="Female">Only Females</option>
+                        </select>
+                        <button onclick="fetchMembers()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm transition">Refresh</button>
+                    </div>
+                </div>
+
+                <!-- SELECTIVE PRINT / EXPORT CONTROLS -->
+                <div class="border-t pt-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center space-x-2 flex-wrap">
+                        <span class="text-xs font-bold uppercase text-slate-500">Select Columns to Print/Export:</span>
+                        <label class="text-xs"><input type="checkbox" class="col-selector" value="photo" checked> Photo</label>
+                        <label class="text-xs"><input type="checkbox" class="col-selector" value="full_name" checked> Name</label>
+                        <label class="text-xs"><input type="checkbox" class="col-selector" value="email" checked> Email</label>
+                        <label class="text-xs"><input type="checkbox" class="col-selector" value="phone" checked> Phone</label>
+                        <label class="text-xs"><input type="checkbox" class="col-selector" value="level" checked> Level</label>
+                        <label class="text-xs"><input type="checkbox" class="col-selector" value="department" checked> Dept</label>
+                        <label class="text-xs"><input type="checkbox" class="col-selector" value="current_unit" checked> Unit</label>
+                        <button onclick="toggleAllColumns(true)" class="text-xs text-emerald-700 underline ml-2">Select All</button>
+                    </div>
+                    <div class="space-x-2">
+                        <button onclick="exportToExcel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm transition">Export Excel</button>
+                        <button onclick="printFilteredTable()" class="bg-emerald-900 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm transition">Print / PDF Selected</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEMBERS TABLE -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-100">
+                    <h3 id="tableTitle" class="text-lg font-semibold text-slate-800">All Registered Members</h3>
+                </div>
+                <div class="overflow-x-auto max-h-[60vh]">
+                    <table class="w-full text-left border-collapse">
+                        <thead id="tableHead" class="bg-slate-50 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200 sticky top-0 z-10"></thead>
+                        <tbody id="membersTableBody" class="divide-y divide-slate-100 text-sm text-slate-700">
+                            <tr><td class="p-6 text-center text-slate-400">Loading records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- UNITS BREAKDOWN SECTION -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <h3 class="text-lg font-semibold text-slate-800">Fellowship Units Breakdown</h3>
+                <div id="unitsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        const SUPABASE_URL = 'https://nlhykdgpneynozwzuylk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5saHlrZGdwbmV5bm96d3p1eWxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4Njg0NzAsImV4cCI6MjEwNjQ0NDQ3MH0.-_KKSRsz_jLDveSH6kX7vjTCRabF2Eqd3bXR4ekJ_1c';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allMembers = [];
+        let filteredMembers = [];
+        let activeLevel = 'ALL';
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                fetchMembers();
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+                alert('Login failed: ' + error.message);
+                return;
+            }
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            fetchMembers();
+        });
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            location.reload();
+        }
+
+        async function fetchMembers() {
+            const { data, error } = await supabaseClient
+                .from('sucf data')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                alert('Error loading data: ' + error.message);
+                return;
+            }
+
+            allMembers = data || [];
+            updateStatistics();
+            renderUnitsBreakdown();
+            applyFilters();
+        }
+
+        function updateStatistics() {
+            const total = allMembers.length;
+            const males = allMembers.filter(m => m.gender && m.gender.toLowerCase() === 'male').length;
+            const females = allMembers.filter(m => m.gender && m.gender.toLowerCase() === 'female').length;
+            
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statMales').textContent = males;
+            document.getElementById('statFemales').textContent = females;
+            
+            const unitsSet = new Set(allMembers.map(m => m.current_unit).filter(Boolean));
+            document.getElementById('statUnits').textContent = unitsSet.size;
+        }
+
+        function filterByLevel(level) {
+            activeLevel = level;
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                if (btn.textContent.includes(level) || (level === 'ALL' && btn.textContent.includes('All'))) {
+                    btn.className = 'level-btn px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-800 text-white transition';
+                } else {
+                    btn.className = 'level-btn px-4 py-2 rounded-lg text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+                }
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const genderVal = document.getElementById('genderFilter').value;
+
+            filteredMembers = allMembers.filter(m => {
+                let matchesLevel = (activeLevel === 'ALL') || (m.level && m.level.toUpperCase().includes(activeLevel.toUpperCase()));
+                let matchesGender = (genderVal === 'ALL') || (m.gender && m.gender.toLowerCase() === genderVal.toLowerCase());
+                return matchesLevel && matchesGender;
+            });
+
+            document.getElementById('tableTitle').textContent = `Members Records (${filteredMembers.length} found)`;
+            renderTable();
+        }
+
+        function renderTable() {
+            const thead = document.getElementById('tableHead');
+            const tbody = document.getElementById('membersTableBody');
+
+            if (filteredMembers.length === 0) {
+                thead.innerHTML = `<tr><th class="p-4">Status</th></tr>`;
+                tbody.innerHTML = `<tr><td class="p-6 text-center text-slate-400">No records found for this filter.</td></tr>`;
+                return;
+            }
+
+            const allKeys = Object.keys(allMembers[0]);
+
+            thead.innerHTML = `
+                <tr>
+                    ${allKeys.map(col => `<th class="p-4 bg-slate-50">${col.replace(/_/g, ' ')}</th>`).join('')}
+                </tr>
+            `;
+
+            tbody.innerHTML = filteredMembers.map(m => `
+                <tr class="hover:bg-slate-50 transition">
+                    ${allKeys.map(col => {
+                        let val = m[col];
+                        if (val && typeof val === 'string' && (val.startsWith('http') || val.startsWith('data:image')) && (col.includes('photo') || col.includes('image') || col.includes('picture'))) {
+                            return `<td class="p-4"><img src="${val}" class="w-10 h-10 object-cover rounded-full border"></td>`;
+                        }
+                        return `<td class="p-4">${val !== null && val !== undefined ? val : 'N/A'}</td>`;
+                    }).join('')}
+                </tr>
+            `).join('');
+        }
+
+        function renderUnitsBreakdown() {
+            const container = document.getElementById('unitsContainer');
+            const unitsMap = {};
+
+            allMembers.forEach(m => {
+                const unit = m.current_unit || 'Unassigned / None';
+                if (!unitsMap[unit]) unitsMap[unit] = [];
+                unitsMap[unit].push(m.full_name || 'Anonymous');
+            });
+
+            container.innerHTML = Object.entries(unitsMap).map(([unit, members]) => `
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-emerald-900">${unit}</h4>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-full">${members.length} members</span>
+                    </div>
+                    <ul class="text-xs text-slate-600 space-y-1 max-h-32 overflow-y-auto">
+                        ${members.map(name => `<li>• ${name}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+
+        function toggleAllColumns(select) {
+            document.querySelectorAll('.col-selector').forEach(cb => cb.checked = select);
+        }
+
+        function exportToExcel() {
+            if (!filteredMembers.length) {
+                alert('No data to export.');
+                return;
+            }
+            const selectedCols = Array.from(document.querySelectorAll('.col-selector:checked')).map(cb => cb.value);
+            const exportData = filteredMembers.map(m => {
+                const row = {};
+                selectedCols.forEach(col => row[col] = m[col]);
+                return row;
+            });
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "SUCF Filtered Members");
+            XLSX.writeFile(workbook, `SUCF_Members_${activeLevel}.xlsx`);
+        }
+
+        function printFilteredTable() {
+            const selectedCols = Array.from(document.querySelectorAll('.col-selector:checked')).map(cb => cb.value);
+            if (!selectedCols.length) {
+                alert('Please select at least one column to print.');
+                return;
+            }
+
+            let printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>SUCF Members Report</title>');
+            printWindow.document.write('<style>body{font-family:sans-serif;padding:20px;} table{width:100%;border-collapse:collapse;margin-top:20px;} th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:12px;} th{background:#064e3b;color:white;} img{width:30px;height:30px;border-radius:50%;object-fit:cover;}</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(`<h2>SUCF Town Campus - Members Report (${activeLevel})</h2>`);
+            printWindow.document.write('<table><thead><tr>');
+            selectedCols.forEach(col => printWindow.document.write(`<th>${col.toUpperCase()}</th>`));
+            printWindow.document.write('</tr></thead><tbody>');
+
+            filteredMembers.forEach(m => {
+                printWindow.document.write('<tr>');
+                selectedCols.forEach(col => {
+                    let val = m[col] || '';
+                    if (col === 'photo' && val) {
+                        printWindow.document.write(`<td><img src="${val}"/></td>`);
+                    } else {
+                        printWindow.document.write(`<td>${val}</td>`);
+                    }
+                });
+                printWindow.document.write('</tr>');
+            });
+
+            printWindow.document.write('</tbody></table></body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+    </script>
+</body>
+</html>
